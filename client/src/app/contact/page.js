@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const inputStyle = { 
   backgroundColor: '#111', 
@@ -56,6 +57,8 @@ function Contact() {
   };
 
   return (
+    <>
+    <Header />
     <div style={{ minHeight: '100vh', backgroundColor: '#131313', paddingTop: '72px' }}>
       <section style={{ padding: '6rem 3rem' }}>
         <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', fontWeight: 600, letterSpacing: '0.5em', textTransform: 'uppercase', color: '#555', marginBottom: '0.75rem' }}>
@@ -169,6 +172,7 @@ function Contact() {
       </section>
       <Footer />
     </div>
+    </>
   );
 }
 
