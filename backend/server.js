@@ -6,28 +6,28 @@ import cors from "cors";
 import mongoose from "mongoose";
 import contactRoute from "./routes/contact.js";
 
-dotenv.config();
-
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000" }));
+app.use(cors({
+  origin: [
+    "https://main.d3ke6u6bu2iadw.amplifyapp.com",
+    "http://localhost:3000",
+  ]
+}));
+
 app.use(express.json());
 
-// Routes
 app.use("/api/contact", contactRoute);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected");
-
     const PORT = process.env.PORT || 5000;
-
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   })
   .catch(err => {
-    console.error("❌ MongoDB connection failed:");
-    console.error(err);   // THIS is what you're missing
+    console.error("❌ MongoDB connection failed:", err);
     process.exit(1);
   });
