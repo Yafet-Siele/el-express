@@ -1,72 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HeroVideo from "../components/HeroVideo";
 import { useCountUp } from "../hooks/useCountUp";
-
-/* ── Hero video ─────────────────────────────────────────── */
-function HeroVideo() {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-
-    // Pick the right source (the `media` attr on <source> is ignored by video)
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    v.src = isMobile ? "/videos/hero-mobile.mp4" : "/videos/hero.mp4";
-
-    // React doesn't reliably render `muted` as an attribute, so force it
-    v.muted = true;
-    v.defaultMuted = true;
-    v.playsInline = true;
-    v.setAttribute("playsinline", "");
-    v.setAttribute("webkit-playsinline", "");
-
-    const tryPlay = () => {
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {}); // blocked: stay on poster
-    };
-
-    tryPlay();
-
-    // Retry when the tab comes back, and on first touch (Low Power Mode fallback)
-    const onVisible = () => { if (!document.hidden) tryPlay(); };
-    const onTouch = () => tryPlay();
-
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("touchstart", onTouch, { once: true, passive: true });
-
-    return () => {
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("touchstart", onTouch);
-    };
-  }, []);
-
-  return (
-    <video
-      ref={ref}
-      className="hero-video"
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      controls={false}
-      disablePictureInPicture
-      poster="/videos/hero-poster.jpg"
-      style={{
-        position: "absolute", inset: 0,
-        width: "100%", height: "100%",
-        objectFit: "cover", zIndex: 0,
-        pointerEvents: "none",
-      }}
-    />
-  );
-}
 
 function Reveal({ children, delay = 0, style = {} }) {
   const ref = useRef(null);
@@ -168,6 +108,7 @@ export default function Home() {
           overflow: "hidden",
         }}>
           <HeroVideo />
+
           <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.75) 100%)" }} />
           <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.45) 100%)" }} />
 
@@ -231,7 +172,7 @@ export default function Home() {
               style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem" }}
             >
               {[
-                { label: "Get a Quote", href: "/contact", bg: "#fff",        color: "#000", border: "none"                            },
+                { label: "Get a Quote", href: "/contact", bg: "#fff",        color: "#000", border: "none"                             },
                 { label: "Our Story",   href: "/about",   bg: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.25)" },
               ].map(({ label, href, bg, color, border }) => (
                 <motion.div key={label} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
@@ -294,18 +235,16 @@ export default function Home() {
           <div>
             <Reveal><Label>Who We Are</Label></Reveal>
             {["Built in Calgary.", "Run with Purpose."].map((line, i) => (
-              <div key={line} style={{ overflow: "hidden" }}>
-                <Reveal delay={0.05 + i * 0.1}>
-                  <h2 style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: "clamp(32px, 6vw, 72px)", fontWeight: 900,
-                    lineHeight: 0.95, textTransform: "uppercase",
-                    color: i === 0 ? "#fff" : "#333", margin: 0,
-                  }}>
-                    {line}
-                  </h2>
-                </Reveal>
-              </div>
+              <Reveal key={line} delay={0.05 + i * 0.1}>
+                <h2 style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: "clamp(32px, 6vw, 72px)", fontWeight: 900,
+                  lineHeight: 0.95, textTransform: "uppercase",
+                  color: i === 0 ? "#fff" : "#333", margin: 0,
+                }}>
+                  {line}
+                </h2>
+              </Reveal>
             ))}
           </div>
 
@@ -397,7 +336,7 @@ export default function Home() {
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
             gap: "1px", backgroundColor: "#1c1c1c",
           }}>
             {services.map(({ number, title, body }, i) => (
@@ -476,7 +415,7 @@ export default function Home() {
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
             gap: "1px", backgroundColor: "#1c1c1c",
           }}>
             {testimonials.map(({ quote, name, company }, i) => (
@@ -490,7 +429,7 @@ export default function Home() {
                     fontFamily: "'Barlow Condensed', sans-serif",
                     fontSize: "36px", color: "#2a2a2a", fontWeight: 900, lineHeight: 1,
                   }}>
-                    "
+                    &ldquo;
                   </div>
                   <p style={{
                     fontFamily: "'Barlow', sans-serif", fontSize: "15px",
@@ -550,8 +489,8 @@ export default function Home() {
                 fontSize: "clamp(15px, 2vw, 17px)", fontWeight: 300,
                 color: "#666", lineHeight: 1.8, maxWidth: "480px",
               }}>
-                Whether it's a quote, a question, or a same-day job — reach out and
-                we'll get back to you within the hour.
+                Whether it&apos;s a quote, a question, or a same-day job — reach out and
+                we&apos;ll get back to you within the hour.
               </p>
             </Reveal>
 
@@ -600,17 +539,6 @@ export default function Home() {
       </div>
 
       <style>{`
-        /* Hide the iOS/Android play-button overlay on the hero video */
-        .hero-video::-webkit-media-controls,
-        .hero-video::-webkit-media-controls-panel,
-        .hero-video::-webkit-media-controls-play-button,
-        .hero-video::-webkit-media-controls-start-playback-button,
-        .hero-video::-webkit-media-controls-overlay-play-button {
-          display: none !important;
-          -webkit-appearance: none;
-          opacity: 0 !important;
-        }
-
         @media (min-width: 768px) {
           .about-grid   { grid-template-columns: 1fr 1fr !important; }
           .contact-grid { grid-template-columns: 1fr 1fr !important; }
